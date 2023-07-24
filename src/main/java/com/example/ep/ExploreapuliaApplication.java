@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +24,8 @@ import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 @SpringBootApplication
 public class ExploreapuliaApplication implements CommandLineRunner {
 
+	@Value("${ec.importfile}")
+	private String importFile;
 	@Autowired
 	private TourPackageService tourPackageService;
 	@Autowired
@@ -61,12 +64,10 @@ public class ExploreapuliaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws IOException {
-		//Create the Tour Packages
 		createTourPackages();
 		long numOfPackages = tourPackageService.total();
-
-		//Load the tours from an external Json File
-		createTours("ExploreApulia.json");
+		createTours(importFile);
+		long numOfTours = tourService.total();
 	}
 
 	/**
