@@ -5,9 +5,11 @@ import com.example.ep.domain.TourRating;
 import com.example.ep.domain.TourRatingPk;
 import com.example.ep.repository.TourRatingRepository;
 import com.example.ep.repository.TourRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.NoSuchElementException;
 
@@ -17,6 +19,7 @@ public class TourRatingController {
     private TourRatingRepository tourRatingRepository;
     private TourRepository tourRepository;
 
+    @Autowired
     public TourRatingController(TourRatingRepository tourRatingRepository, TourRepository tourRepository) {
         this.tourRatingRepository = tourRatingRepository;
         this.tourRepository = tourRepository;
@@ -28,7 +31,7 @@ public class TourRatingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createTourRating(@PathVariable(value = "tourId") int tourId,
-                                 @RequestBody @Validated RatingDto ratingDto) {
+                                 @Valid @RequestBody RatingDto ratingDto) {
         Tour tour = verifyTour(tourId);
         TourRatingPk tourRatingPk = new TourRatingPk(tour, ratingDto.getCustomerId());
         tourRatingRepository.save(new TourRating(tourRatingPk, ratingDto.getScore(), ratingDto.getComment()));
