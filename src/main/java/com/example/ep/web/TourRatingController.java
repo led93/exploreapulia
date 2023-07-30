@@ -34,9 +34,7 @@ public class TourRatingController {
     @GetMapping
     List<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId) {
         verifyTour(tourId);
-        return tourRatingRepository.findByPkTourId(tourId).stream()
-                .map(RatingDto::new)
-                .collect(Collectors.toList());
+        return tourRatingRepository.findByPkTourId(tourId).stream().map(RatingDto::new).collect(Collectors.toList());
     }
 
     @GetMapping(path = "/average")
@@ -57,6 +55,37 @@ public class TourRatingController {
         tourRatingRepository.save(new TourRating(tourRatingPk, ratingDto.getScore(), ratingDto.getComment()));
     }
 
+    @PutMapping
+    public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId, @RequestBody @Valid RatingDto ratingDto) {
+        TourRating tourRating = verifyTourRating(tourId, ratingDto.getCustomerId());
+        tourRating.setScore(ratingDto.getScore());
+        tourRating.setComment(ratingDto.getComment());
+        return new RatingDto(tourRatingRepository.save(tourRating));
+    }
+
+    @PatchMapping
+    public RatingDto updateWithPatch(@PathVariable(value = "tourId") int tourId, @RequestBody @Valid RatingDto ratingDto) {
+        TourRating tourRating = verifyTourRating(tourId, ratingDto.getCustomerId());
+        if (ratingDto.getScore() != null) {
+            tourRating.setScore(ratingDto.getScore());
+        }
+        if (ratingDto.getComment() != null) {
+            tourRating.setComment(ratingDto.getComment());
+        }
+        return new RatingDto(tourRatingRepository.save(tourRating));
+    }
+
+    @DeleteMapping(path = "/{customerId}")
+    public void delete(@PathVariable(value = "tourId") int tourId, @PathVariable(value = "customerId") int customerId) {
+        TourRating tourRating = verifyTourRating(tourId, customerId);
+        tourRatingRepository.delete(tourRating);
+    }
+
+    private TourRating verifyTourRating(int tourId, int customerId) {
+        return tourRatingRepository.findByPkTourIdAndPkCustomerId(tourId, customerId)
+                .orElseThrow(() -> new NoSuchElementException("Tour-Rating pair for request(" + tourId + " for customer " + customerId));
+    }
+
     /**
      * Verify and return the Tour given a tourId
      *
@@ -65,8 +94,8 @@ public class TourRatingController {
      * @throws NoSuchElementException if no Tour found.
      */
     private Tour verifyTour(int tourId) throws NoSuchElementException {
-        return tourRepository.findById(tourId).orElseThrow(() ->
-                new NoSuchElementException("Tour does not exist " + tourId));
+        return tourRepository.findById(tourId)
+                .orElseThrow(() -> new NoSuchElementException("Tour does not exist " + tourId));
     }
 
     /**

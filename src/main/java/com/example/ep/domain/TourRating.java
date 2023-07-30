@@ -67,4 +67,12 @@ public class TourRating {
         result = 31 * result + (comment != null ? comment.hashCode() : 0);
         return result;
     }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }
