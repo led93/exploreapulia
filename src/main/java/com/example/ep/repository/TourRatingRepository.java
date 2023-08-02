@@ -1,7 +1,6 @@
 package com.example.ep.repository;
 
 import com.example.ep.domain.TourRating;
-import com.example.ep.domain.TourRatingPk;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
@@ -11,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RepositoryRestResource(exported = false)
-public interface TourRatingRepository extends CrudRepository<TourRating, TourRatingPk> {
+public interface TourRatingRepository extends CrudRepository<TourRating, String> {
 
-    List<TourRating> findByPkTourId(Integer tourId);
+    List<TourRating> findByTourId(String tourId);
 
-    Optional<TourRating> findByPkTourIdAndPkCustomerId(Integer tourId, Integer customerId);
+    Optional<TourRating> findByTourIdAndCustomerId(String tourId, Integer customerId);
 
-    Page<TourRating> findByPkTourId(Integer tourId, Pageable pageable);
+    Page<TourRating> findByTourId(String tourId, Pageable pageable);
 }
