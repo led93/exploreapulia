@@ -14,7 +14,7 @@ public class Tour {
     @Column(length = 2000)
     private String description;
     @Column(length = 2000)
-    private String blurp;
+    private String blurb;
     @Column
     private Integer price;
     @Column
@@ -26,17 +26,17 @@ public class Tour {
     @ManyToOne
     private TourPackage tourPackage;
     @Column
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
     @Column
-    @Enumerated
+    @Convert(converter = RegionConverter.class)
     private Region region;
 
-    public Tour(String title, String description, String blurp, Integer price, String duration,
+    public Tour(String title, String description, String blurb, Integer price, String duration,
                 String bullets, String keywords, TourPackage tourPackage, Difficulty difficulty, Region region) {
         this.title = title;
         this.description = description;
-        this.blurp = blurp;
+        this.blurb = blurb;
         this.price = price;
         this.duration = duration;
         this.bullets = bullets;
@@ -68,12 +68,12 @@ public class Tour {
         this.description = description;
     }
 
-    public String getBlurp() {
-        return blurp;
+    public String getBlurb() {
+        return blurb;
     }
 
-    public void setBlurp(String blurp) {
-        this.blurp = blurp;
+    public void setBlurb(String blurb) {
+        this.blurb = blurb;
     }
 
     public Integer getPrice() {
@@ -138,7 +138,7 @@ public class Tour {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", blurp='" + blurp + '\'' +
+                ", blurp='" + blurb + '\'' +
                 ", price=" + price +
                 ", duration='" + duration + '\'' +
                 ", bullets='" + bullets + '\'' +
@@ -159,7 +159,7 @@ public class Tour {
         if (!Objects.equals(id, tour.id)) return false;
         if (!Objects.equals(title, tour.title)) return false;
         if (!Objects.equals(description, tour.description)) return false;
-        if (!Objects.equals(blurp, tour.blurp)) return false;
+        if (!Objects.equals(blurb, tour.blurb)) return false;
         if (!Objects.equals(price, tour.price)) return false;
         if (!Objects.equals(duration, tour.duration)) return false;
         if (!Objects.equals(bullets, tour.bullets)) return false;
@@ -174,7 +174,7 @@ public class Tour {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (blurp != null ? blurp.hashCode() : 0);
+        result = 31 * result + (blurb != null ? blurb.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (duration != null ? duration.hashCode() : 0);
         result = 31 * result + (bullets != null ? bullets.hashCode() : 0);
