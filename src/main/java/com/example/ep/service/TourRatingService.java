@@ -4,6 +4,7 @@ import com.example.ep.domain.Tour;
 import com.example.ep.domain.TourRating;
 import com.example.ep.repository.TourRatingRepository;
 import com.example.ep.repository.TourRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.OptionalDouble;
 
 @Service
+@Transactional
 public class TourRatingService {
     private TourRepository tourRepository;
     private TourRatingRepository tourRatingRepository;
