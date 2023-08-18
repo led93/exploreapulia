@@ -1,7 +1,9 @@
 package com.example.ep.web;
 
-import com.example.ep.domain.TourRating;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 public class RatingDto {
@@ -16,9 +18,6 @@ public class RatingDto {
     @NotNull
     private Integer customerId;
 
-    public RatingDto(TourRating tourRating) {
-        this(tourRating.getScore(), tourRating.getComment(), tourRating.getPk().getCustomerId());
-    }
     public RatingDto(Integer score, String comment, Integer customerId) {
         this.score = score;
         this.comment = comment;

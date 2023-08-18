@@ -1,16 +1,27 @@
 package com.example.ep.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Objects;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TourRating {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @EmbeddedId
-    private TourRatingPk pk;
+    @ManyToOne
+    @JoinColumn(name = "tour_id")
+    private Tour tour;
+
+    @Column(name = "customer_id")
+    private Integer customerId;
 
     @Column(nullable = false)
     private Integer score;
@@ -18,31 +29,25 @@ public class TourRating {
     @Column
     private String comment;
 
-    public TourRatingPk getPk() {
-        return pk;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public TourRating(TourRatingPk pk, Integer score, String comment) {
-        this.pk = pk;
+    public TourRating(Tour tour, Integer customerId, Integer score, String comment) {
+        this.tour = tour;
+        this.customerId =customerId;
         this.score = score;
         this.comment = comment;
     }
 
-    public TourRating() {
+    public TourRating(Tour tour, Integer customerId, int score) {
+        this.tour = tour;
+        this.customerId = customerId;
+        this.score = score;
     }
 
     @Override
     public String toString() {
         return "TourRating{" +
-                "pk=" + pk +
+                "id=" + id +
+                ", tour=" + tour +
+                ", customerId=" + customerId +
                 ", score=" + score +
                 ", comment='" + comment + '\'' +
                 '}';
@@ -52,27 +57,12 @@ public class TourRating {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         TourRating that = (TourRating) o;
-
-        if (!Objects.equals(pk, that.pk)) return false;
-        if (!Objects.equals(score, that.score)) return false;
-        return Objects.equals(comment, that.comment);
+        return Objects.equals(id, that.id) && Objects.equals(tour, that.tour) && Objects.equals(customerId, that.customerId) && Objects.equals(score, that.score) && Objects.equals(comment, that.comment);
     }
 
     @Override
     public int hashCode() {
-        int result = pk != null ? pk.hashCode() : 0;
-        result = 31 * result + (score != null ? score.hashCode() : 0);
-        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-        return result;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+        return Objects.hash(id, tour, customerId, score, comment);
     }
 }
