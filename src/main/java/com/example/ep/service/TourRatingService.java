@@ -5,79 +5,57 @@ import com.example.ep.domain.TourRating;
 import com.example.ep.repository.TourRatingRepository;
 import com.example.ep.repository.TourRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.OptionalDouble;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Service
-@Transactional
 public class TourRatingService {
-    private TourRepository tourRepository;
-    private TourRatingRepository tourRatingRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TourRatingService.class);
+    private final TourRepository tourRepository;
+    private final TourRatingRepository tourRatingRepository;
 
-    public TourRatingService(TourRatingRepository tour, TourRepository tourRepository) {
+    public TourRatingService(TourRatingRepository tourRatingRepository, TourRepository tourRepository) {
         this.tourRepository = tourRepository;
         this.tourRatingRepository = tourRatingRepository;
     }
 
-    /**
-     * Create a new Tour Rating in the database
-     *
-     * @param tourId     tour identifier
-     * @param customerId customer identifier
-     * @param score      score of the tour rating
-     * @param comment    additional comment
-     * @throws NoSuchElementException if no Tour found.
-     */
     public void createNew(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
+        LOGGER.info("Create Rating for tour {} of customers {}", tourId, customerId);
         tourRatingRepository.save(new TourRating(verifyTour(tourId), customerId,
                 score, comment));
     }
 
-    /**
-     * Get a page of tour ratings for a tour.
-     *
-     * @param tourId   tour identifier
-     * @param pageable page parameters to determine which elements to fetch
-     * @return Page of TourRatings
-     * @throws NoSuchElementException if no Tour found.
-     */
+    public Optional<TourRating> lookupRatingById(int id) {
+        return tourRatingRepository.findById(id);
+    }
+
+    public List<TourRating> lookupAll() {
+        LOGGER.info("Lookup all Ratings");
+        return StreamSupport.stream(tourRatingRepository.findAll().spliterator(), false).toList();
+    }
+
     public Page<TourRating> lookupRatings(int tourId, Pageable pageable) throws NoSuchElementException {
+        LOGGER.info("Lookup Rating for tour {}", tourId);
         return tourRatingRepository.findByTourId(verifyTour(tourId).getId(), pageable);
     }
 
-    /**
-     * Update some of the elements of a Tour Rating.
-     *
-     * @param tourId  tour identifier
-     * @param score   score of the tour rating
-     * @param comment additional comment
-     * @return Tour Rating Domain Object
-     * @throws NoSuchElementException if no Tour found.
-     */
     public TourRating update(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
+        LOGGER.info("Update all of Rating for tour {} of customers {}", tourId, customerId);
         TourRating rating = verifyTourRating(tourId, customerId);
         rating.setScore(score);
         rating.setComment(comment);
         return tourRatingRepository.save(rating);
     }
 
-    /**
-     * Update all the elements of a Tour Rating.
-     *
-     * @param tourId     tour identifier
-     * @param customerId customer identifier
-     * @param score      score of the tour rating
-     * @param comment    additional comment
-     * @return Tour Rating Domain Object
-     * @throws NoSuchElementException if no Tour found.
-     */
     public TourRating updateSome(int tourId, Integer customerId, Integer score, String comment)
             throws NoSuchElementException {
+        LOGGER.info("Update some of Rating for tour {} of customers {}", tourId, customerId);
         TourRating rating = verifyTourRating(tourId, customerId);
         if (score != null) {
             rating.setScore(score);
@@ -88,60 +66,35 @@ public class TourRatingService {
         return tourRatingRepository.save(rating);
     }
 
-    /**
-     * Delete a Tour Rating.
-     *
-     * @param tourId     tour identifier
-     * @param customerId customer identifier
-     * @throws NoSuchElementException if no Tour found.
-     */
     public void delete(int tourId, Integer customerId) throws NoSuchElementException {
+        LOGGER.info("Delete Rating for tour {} and customer {}", tourId, customerId);
         TourRating rating = verifyTourRating(tourId, customerId);
         tourRatingRepository.delete(rating);
     }
 
-    /**
-     * Get the average score of a tour.
-     *
-     * @param tourId tour identifier
-     * @return average score as a Double.
-     * @throws NoSuchElementException
-     */
     public Double getAverageScore(int tourId) throws NoSuchElementException {
+        LOGGER.info("Get average score of tour {}", tourId);
         List<TourRating> ratings = tourRatingRepository.findByTourId(verifyTour(tourId).getId());
         OptionalDouble average = ratings.stream().mapToInt(TourRating::getScore).average();
         return average.isPresent() ? average.getAsDouble() : null;
     }
 
     public void rateMany(int tourId, int score, Integer[] customers) {
+        LOGGER.info("Rate tour {} by customers {}", tourId, Arrays.asList(customers));
         tourRepository.findById(tourId).ifPresent(tour -> {
             for (Integer customerId : customers) {
+                LOGGER.debug("Attempt to create Tour Rating for customer {}", customerId);
                 tourRatingRepository.save(new TourRating(tour, customerId, score));
             }
         });
     }
 
-    /**
-     * Verify and return the Tour given a tourId.
-     *
-     * @param tourId
-     * @return the found Tour
-     * @throws NoSuchElementException if no Tour found.
-     */
     private Tour verifyTour(int tourId) throws NoSuchElementException {
         return tourRepository.findById(tourId).orElseThrow(() ->
                 new NoSuchElementException("Tour does not exist " + tourId)
         );
     }
 
-    /**
-     * Verify and return the TourRating for a particular tourId and Customer
-     *
-     * @param tourId
-     * @param customerId
-     * @return the found TourRating
-     * @throws NoSuchElementException if no TourRating found
-     */
     private TourRating verifyTourRating(int tourId, int customerId) throws NoSuchElementException {
         return tourRatingRepository.findByTourIdAndCustomerId(tourId, customerId).orElseThrow(() ->
                 new NoSuchElementException("Tour-Rating pair for request("
