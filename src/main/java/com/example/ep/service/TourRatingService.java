@@ -4,7 +4,6 @@ import com.example.ep.domain.Tour;
 import com.example.ep.domain.TourRating;
 import com.example.ep.repository.TourRatingRepository;
 import com.example.ep.repository.TourRepository;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,8 @@ public class TourRatingService {
         return tourRatingRepository.findByTourId(verifyTour(tourId).getId(), pageable);
     }
 
-    public TourRating update(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
+    public TourRating update(int tourId, Integer customerId, Integer score, String comment)
+            throws NoSuchElementException {
         LOGGER.info("Update all of Rating for tour {} of customers {}", tourId, customerId);
         TourRating rating = verifyTourRating(tourId, customerId);
         rating.setScore(score);
@@ -95,7 +95,7 @@ public class TourRatingService {
         );
     }
 
-    private TourRating verifyTourRating(int tourId, int customerId) throws NoSuchElementException {
+    TourRating verifyTourRating(int tourId, int customerId) throws NoSuchElementException {
         return tourRatingRepository.findByTourIdAndCustomerId(tourId, customerId).orElseThrow(() ->
                 new NoSuchElementException("Tour-Rating pair for request("
                         + tourId + " for customer" + customerId));

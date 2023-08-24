@@ -4,26 +4,23 @@ import com.example.ep.domain.Tour;
 import com.example.ep.domain.TourRating;
 import com.example.ep.repository.TourRatingRepository;
 import com.example.ep.repository.TourRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TourRatingServiceTest {
+@SpringBootTest
+class TourRatingServiceTest {
 
     private static final int CUSTOMER_ID = 123;
     private static final int TOUR_ID = 1;
@@ -44,8 +41,8 @@ public class TourRatingServiceTest {
     /**
      * Mock responses to commonly invoked methods.
      */
-    @Before
-    public void setupReturnValuesOfMockMethods() {
+    @BeforeEach
+    void setupReturnValuesOfMockMethods() {
         when(tourRepositoryMock.findById(TOUR_ID)).thenReturn(Optional.of(tourMock));
         when(tourMock.getId()).thenReturn(TOUR_ID);
         when(tourRatingRepositoryMock.findByTourIdAndCustomerId(TOUR_ID, CUSTOMER_ID)).thenReturn(Optional.of(tourRatingMock));
@@ -58,34 +55,34 @@ public class TourRatingServiceTest {
      **************************************************************************************/
 
     @Test
-    public void lookupRatingById() {
+    void lookupRatingById() {
         when(tourRatingRepositoryMock.findById(TOUR_RATING_ID)).thenReturn(Optional.of(tourRatingMock));
 
         Optional<TourRating> tourRating = service.lookupRatingById(TOUR_RATING_ID);
-        assertTrue(tourRating.isPresent());
-        assertThat(tourRating.get(), is(tourRatingMock));
-    }
-
-    public void lookupAll() {
-        when(tourRatingRepositoryMock.findAll()).thenReturn(List.of(tourRatingMock));
-
-        assertThat(service.lookupAll().get(0), is(tourRatingMock));
-    }
-
-    public void getAverageScore() {
-        when(tourRatingMock.getScore()).thenReturn(10);
-
-        assertThat(service.getAverageScore(TOUR_ID), is(10.0));
+        assertThat(tourRating).contains(tourRatingMock);
     }
 
     @Test
-    public void lookupRatings() {
+    void lookupAll() {
+        when(tourRatingRepositoryMock.findAll()).thenReturn(List.of(tourRatingMock));
+        assertThat(service.lookupAll().get(0)).isEqualTo(tourRatingMock);
+    }
+
+    @Test
+    void getAverageScore() {
+        when(tourRatingRepositoryMock.findByTourId(TOUR_ID)).thenReturn(List.of(tourRatingMock));
+        when(tourRatingMock.getScore()).thenReturn(10);
+        assertThat(service.getAverageScore(TOUR_ID)).isEqualTo(10.0);
+    }
+
+    @Test
+    void lookupRatings() {
         //create mocks of Pageable and Page (only needed in this test)
         Pageable pageable = mock(Pageable.class);
         Page<TourRating> page = mock(Page.class);
         when(tourRatingRepositoryMock.findByTourId(1, pageable)).thenReturn(page);
 
-        assertThat(service.lookupRatings(TOUR_ID, pageable), is(page));
+        assertThat(service.lookupRatings(TOUR_ID, pageable)).isEqualTo(page);
     }
 
     /**************************************************************************************
@@ -95,7 +92,7 @@ public class TourRatingServiceTest {
      **************************************************************************************/
 
     @Test
-    public void delete() {
+    void delete() {
         service.delete(1, CUSTOMER_ID);
 
         //verify tourRatingRepository.delete invoked
@@ -103,7 +100,7 @@ public class TourRatingServiceTest {
     }
 
     @Test
-    public void rateMany() {
+    void rateMany() {
         service.rateMany(TOUR_ID, 10, new Integer[]{CUSTOMER_ID, CUSTOMER_ID + 1});
 
         //verify tourRatingRepository.save invoked twice
@@ -111,8 +108,8 @@ public class TourRatingServiceTest {
     }
 
     @Test
-    public void update() {
-        service.update(TOUR_ID,CUSTOMER_ID,5, "great");
+    void update() {
+        service.update(TOUR_ID, CUSTOMER_ID, 5, "great");
 
         //verify tourRatingRepository.save invoked once
         verify(tourRatingRepositoryMock).save(any(TourRating.class));
@@ -123,7 +120,7 @@ public class TourRatingServiceTest {
     }
 
     @Test
-    public void updateSome() {
+    void updateSome() {
         service.updateSome(TOUR_ID, CUSTOMER_ID, 1, "awful");
 
         //verify tourRatingRepository.save invoked once
@@ -143,7 +140,7 @@ public class TourRatingServiceTest {
      **************************************************************************************/
 
     @Test
-    public void createNew() {
+    void createNew() {
         //prepare to capture a TourRating Object
         ArgumentCaptor<TourRating> tourRatingCaptor = ArgumentCaptor.forClass(TourRating.class);
 
@@ -154,9 +151,10 @@ public class TourRatingServiceTest {
         verify(tourRatingRepositoryMock).save(tourRatingCaptor.capture());
 
         //verify the attributes of the Tour Rating Object
-        assertThat(tourRatingCaptor.getValue().getTour(), is(tourMock));
-        assertThat(tourRatingCaptor.getValue().getCustomerId(), is(CUSTOMER_ID));
-        assertThat(tourRatingCaptor.getValue().getScore(), is(2));
-        assertThat(tourRatingCaptor.getValue().getComment(), is("ok"));
+        assertThat(tourRatingCaptor.getValue().getTour()).isEqualTo(tourMock);
+        assertThat(tourRatingCaptor.getValue().getCustomerId()).isEqualTo(CUSTOMER_ID);
+        assertThat(tourRatingCaptor.getValue().getScore()).isEqualTo(2);
+        assertThat(tourRatingCaptor.getValue().getComment()).isEqualTo("ok");
+
     }
 }
