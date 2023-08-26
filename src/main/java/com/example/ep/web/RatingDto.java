@@ -4,8 +4,15 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RatingDto {
 
     @Min(0)
@@ -18,36 +25,4 @@ public class RatingDto {
     @NotNull
     private Integer customerId;
 
-    public RatingDto(Integer score, String comment, Integer customerId) {
-        this.score = score;
-        this.comment = comment;
-        this.customerId = customerId;
-    }
-
-    public RatingDto() {
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
 }
