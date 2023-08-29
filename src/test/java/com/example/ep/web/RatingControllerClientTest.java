@@ -90,7 +90,7 @@ class RatingControllerClientTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(Objects.requireNonNull(response.getBody()).getCustomerId()).isEqualTo(CUSTOMER_ID);
-        assertThat(response.getBody().getComment()).isEqualTo(COMMENT);
-        assertThat(response.getBody().getScore()).isEqualTo(SCORE);
+        assertThat(Objects.requireNonNull(response.getBody()).getComment()).isEqualTo(COMMENT);
+        assertThat(Objects.requireNonNull(response.getBody()).getScore()).isEqualTo(SCORE);
     }
 }

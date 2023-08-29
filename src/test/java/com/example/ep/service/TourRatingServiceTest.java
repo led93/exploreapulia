@@ -77,7 +77,7 @@ class TourRatingServiceTest {
 
     @Test
     void lookupRatings() {
-        //create mocks of Pageable and Page (only needed in this test)
+        // create mocks of Pageable and Page (only needed in this test)
         Pageable pageable = mock(Pageable.class);
         Page<TourRating> page = mock(Page.class);
         when(tourRatingRepositoryMock.findByTourId(1, pageable)).thenReturn(page);
@@ -95,15 +95,15 @@ class TourRatingServiceTest {
     void delete() {
         service.delete(1, CUSTOMER_ID);
 
-        //verify tourRatingRepository.delete invoked
+        // verify tourRatingRepository.delete invoked
         verify(tourRatingRepositoryMock).delete(any(TourRating.class));
     }
 
     @Test
     void rateMany() {
-        service.rateMany(TOUR_ID, 10, new Integer[]{CUSTOMER_ID, CUSTOMER_ID + 1});
+        service.rateMany(TOUR_ID, 10, new Integer[] { CUSTOMER_ID, CUSTOMER_ID + 1 });
 
-        //verify tourRatingRepository.save invoked twice
+        // verify tourRatingRepository.save invoked twice
         verify(tourRatingRepositoryMock, times(2)).save(any(TourRating.class));
     }
 
@@ -111,10 +111,10 @@ class TourRatingServiceTest {
     void update() {
         service.update(TOUR_ID, CUSTOMER_ID, 5, "great");
 
-        //verify tourRatingRepository.save invoked once
+        // verify tourRatingRepository.save invoked once
         verify(tourRatingRepositoryMock).save(any(TourRating.class));
 
-        //verify and tourRating setter methods invoked
+        // verify and tourRating setter methods invoked
         verify(tourRatingMock).setComment("great");
         verify(tourRatingMock).setScore(5);
     }
@@ -123,10 +123,10 @@ class TourRatingServiceTest {
     void updateSome() {
         service.updateSome(TOUR_ID, CUSTOMER_ID, 1, "awful");
 
-        //verify tourRatingRepository.save invoked once
+        // verify tourRatingRepository.save invoked once
         verify(tourRatingRepositoryMock).save(any(TourRating.class));
 
-        //verify and tourRating setter methods invoked
+        // verify and tourRating setter methods invoked
         verify(tourRatingMock).setComment("awful");
         verify(tourRatingMock).setScore(1);
     }
@@ -141,16 +141,17 @@ class TourRatingServiceTest {
 
     @Test
     void createNew() {
-        //prepare to capture a TourRating Object
+        // prepare to capture a TourRating Object
         ArgumentCaptor<TourRating> tourRatingCaptor = ArgumentCaptor.forClass(TourRating.class);
 
-        //invoke createNew
+        // invoke createNew
         service.createNew(TOUR_ID, CUSTOMER_ID, 2, "ok");
 
-        //verify tourRatingRepository.save invoked once and capture the TourRating Object
+        // verify tourRatingRepository.save invoked once and capture the TourRating
+        // Object
         verify(tourRatingRepositoryMock).save(tourRatingCaptor.capture());
 
-        //verify the attributes of the Tour Rating Object
+        // verify the attributes of the Tour Rating Object
         assertThat(tourRatingCaptor.getValue().getTour()).isEqualTo(tourMock);
         assertThat(tourRatingCaptor.getValue().getCustomerId()).isEqualTo(CUSTOMER_ID);
         assertThat(tourRatingCaptor.getValue().getScore()).isEqualTo(2);
