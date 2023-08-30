@@ -4,6 +4,7 @@ import com.example.ep.domain.TourRating;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
+@AutoConfigureTestDatabase
 class TourRatingServiceIntegrationTest {
     private static final int CUSTOMER_ID = 456;
     private static final int TOUR_ID = 1;
