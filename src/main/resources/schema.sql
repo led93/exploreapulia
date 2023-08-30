@@ -13,10 +13,10 @@ CREATE TABLE security_user (
 );
 
 CREATE TABLE user_role (
-    user_id BIG INT NOT NULL,
+    user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
-    CONSTRAINT FK_SECURITY_USER_ID FOREIGN KEY (user_id) REFERENCES security_user(id),
-    CONSTRAINT FK SECURITY_ROLE_ID FOREIGN KEY (role_id) REFERENCES security_role(id)
+    CONSTRAINT FK_SECURITY_USER_ID FOREIGN KEY (user_id) REFERENCES security_user (id),
+    CONSTRAINT FK_SECURITY_ROLE_ID FOREIGN KEY (role_id) REFERENCES security_role (id)
 );
 
 CREATE TABLE tour_package(
