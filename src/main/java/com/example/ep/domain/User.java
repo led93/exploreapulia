@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Entity
@@ -26,22 +26,16 @@ public class User implements UserDetails {
 
     private String password;
 
-    private String firstName;
-
-    private String lastName;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role_junction",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
-    public User(String username, String password, Role role, String firstName, String lastName) {
+    public User(String username, String password, Set<Role> roles) {
         this.username = username;
         this.password = password;
-        this.roles = List.of(role);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.roles = roles;
     }
 
     @Override

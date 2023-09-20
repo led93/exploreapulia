@@ -1,11 +1,11 @@
 CREATE TABLE security_role (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   description varchar(100) DEFAULT NULL,
   role_name varchar(100) DEFAULT NULL
 );
 
 CREATE TABLE security_user (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE tour_package(
 );
 
 CREATE TABLE tour (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     tour_package_code CHAR(2) NOT NULL,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(2000) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE tour (
 ALTER TABLE tour ADD FOREIGN KEY (tour_package_code) REFERENCES tour_package(code);
 
 CREATE TABLE tour_rating (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     tour_id BIGINT,
     customer_id BIGINT,
     score INT,

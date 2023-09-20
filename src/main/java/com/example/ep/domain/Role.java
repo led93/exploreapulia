@@ -1,7 +1,9 @@
 package com.example.ep.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "security_role")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role implements GrantedAuthority {
 
     @Id
@@ -20,6 +24,10 @@ public class Role implements GrantedAuthority {
 
     @Column(name = "description")
     private String description;
+
+    public Role(String authority) {
+        this.authority = authority;
+    }
 
     @Override
     public String getAuthority() {
